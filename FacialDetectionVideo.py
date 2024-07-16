@@ -1,33 +1,38 @@
+print("Please wait a few seconds while we import dependencies...")
+
+
 from facenet_pytorch import MTCNN
 from PIL import Image
 import cv2
 import time
 
 
-def center_crop(img, dim):  # METHOD WRITTEN BY NANDAN MANJUNATHA
-    # Returns cv2 image
+def center_crop(img, dim):
     width, height = img.shape[1], img.shape[0]
 
-    # process crop width and height for max available dimension
     crop_width = dim[0] if dim[0] < img.shape[1] else img.shape[1]
     crop_height = dim[1] if dim[1] < img.shape[0] else img.shape[0]
     mid_x, mid_y = int(width / 2), int(height / 2)
     cw2, ch2 = int(crop_width / 2), int(crop_height / 2)
     crop_img = img[mid_y - ch2:mid_y + ch2, mid_x - cw2:mid_x + cw2]
-    return crop_img
 
+    return crop_img  # OpenCV Image
+
+
+# Welcome message
+print("Welcome to FacialDetectionVideo. Keep in mind that the escape character is 'q'.")
 
 # Initialize MTCNN for face detection
+print("Initializing MTCNN...")
 mtcnn = MTCNN()
-# mtcnn.cuda(device=0)  # TODO: Set device to use GPU
-# print(mtcnn.device)
 
 # Initialize OpenCV VideoCapture
+print("Initializing OpenCV VideoCapture...")
 cam = cv2.VideoCapture(0)  # Replace 0 with video file to run on video file
 
 # Set image processing resolution
 maxRes = min(cam.get(cv2.CAP_PROP_FRAME_WIDTH), cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
-resolution = int(input(f"Input processing resolution (cannot be over {maxRes}): "))
+resolution = int(input(f"Please enter the processing resolution (cannot be over {maxRes}): "))
 
 while resolution > maxRes:
     resolution = int(input(f"ERROR. Input processing resolution (cannot be over {maxRes}): "))
@@ -35,6 +40,7 @@ while resolution > maxRes:
 while True:
     result, frame = cam.read()
 
+    # Center square crop OpenCV Image
     frame = center_crop(frame, (min(frame.shape[0], frame.shape[1]), min(frame.shape[0], frame.shape[1])))
 
     # Convert OpenCV Image to PIL
@@ -48,7 +54,7 @@ while True:
     # Detect faces in the image
     start_time = time.perf_counter()
     boxes, _ = mtcnn.detect(downscaled_img)
-    print(1.0 / (time.perf_counter() - start_time))
+    print(1.0 / (time.perf_counter() - start_time))  # TODO: FPS counter overlay
 
     # Resize boxes to map on original image size
     if boxes is not None:

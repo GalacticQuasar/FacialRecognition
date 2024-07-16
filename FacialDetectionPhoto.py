@@ -13,7 +13,7 @@ cam = cv2.VideoCapture(0)
 input("Click enter when you want to take the picture.")
 result, opencv_image = cam.read()
 
-# img = Image.open("<filename>.jpg")
+# img = Image.open("<filename>.jpg")  # Use to open image file instead
 
 # Convert opencv image to PIL image
 color_converted = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB)
@@ -35,15 +35,19 @@ else:
 # Downscale
 multiplier = img.width / 160  # height and width are equal
 downscaled_img = img.resize(size=(160, 160))  # Downscale Image
+
 # Detect faces in the image
 start_time = time.perf_counter()
 boxes, _ = mtcnn.detect(downscaled_img)
-print(time.perf_counter() - start_time)
+print("Detection Performance:", time.perf_counter() - start_time, "seconds.")
+
 # Resize boxes to map on original image size
 if boxes is not None:
-    boxes = [list(map(lambda x: x * multiplier, box)) for box in boxes]  # Upscale box coordinates for original image size
+    # Upscale box coordinates for original image size
+    boxes = [list(map(lambda x: x * multiplier, box)) for box in boxes]
+
+    # Draw bounding boxes
     for box in boxes:
-        # Draw bounding boxes on the image
         draw = ImageDraw.Draw(img)
         draw.rectangle(box, outline='red', width=3)
 
