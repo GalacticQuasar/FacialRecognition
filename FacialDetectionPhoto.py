@@ -3,7 +3,7 @@ from PIL import Image, ImageDraw
 import cv2
 import time
 
-# Initialize MTCNN for face detection
+# Initialize MTCNN for facial detection
 mtcnn = MTCNN()
 
 # Initialize OpenCV VideoCapture
@@ -15,7 +15,7 @@ result, opencv_image = cam.read()
 
 # img = Image.open("<filename>.jpg")  # Use to open image file instead
 
-# Convert opencv image to PIL image
+# Convert OpenCV image to PIL Image
 color_converted = cv2.cvtColor(opencv_image, cv2.COLOR_BGR2RGB)
 img = Image.fromarray(color_converted)
 
@@ -32,11 +32,11 @@ else:
     bottom = img.height - top
     img = img.crop(box=(0, top, img.width, bottom))
 
-# Downscale
+# Downscale image for processing
 multiplier = img.width / 160  # height and width are equal
 downscaled_img = img.resize(size=(160, 160))  # Downscale Image
 
-# Detect faces in the image
+# Facial Detection
 start_time = time.perf_counter()
 boxes, _ = mtcnn.detect(downscaled_img)
 print("Detection Performance:", time.perf_counter() - start_time, "seconds.")
@@ -51,5 +51,5 @@ if boxes is not None:
         draw = ImageDraw.Draw(img)
         draw.rectangle(box, outline='red', width=3)
 
-# Display image with detected faces
+# Display image with bounding boxes
 img.show()
