@@ -1,5 +1,5 @@
 import cv2
-from facenet_pytorch import InceptionResnetV1, MTCNN, extract_face
+from facenet_pytorch import InceptionResnetV1, MTCNN
 from PIL import Image
 from torchvision import transforms
 
